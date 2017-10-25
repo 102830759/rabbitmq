@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.mail.internet.MimeMessage;
 
 /**
- * 接收并处理消息
+ * 消费者-邮箱
  */
 
 @Component

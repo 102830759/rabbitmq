@@ -38,6 +38,16 @@ public class RabbitMQConfig {
     }
 
     /**
+     * 短信 message队列
+     *
+     * @return
+     */
+    @Bean
+    public Queue topicMsgQueue() {
+        return new Queue("topic.msg");
+    }
+
+    /**
      * Topic是RabbitMQ中最灵活的一种方式，可以根据routing_Key自由的绑定不同的队列。
      *
      * @return
@@ -55,6 +65,11 @@ public class RabbitMQConfig {
     @Bean
     public Binding bindingExchangeTopicWeb(Queue topicWebQueue, TopicExchange topicExchange) {
         return BindingBuilder.bind(topicWebQueue).to(topicExchange).with("topic.web");
+    }
+
+    @Bean
+    public Binding bindingExchangeTopicMsg(Queue topicMsgQueue, TopicExchange topicExchange) {
+        return BindingBuilder.bind(topicMsgQueue).to(topicExchange).with("topic.msg");
     }
 
 
