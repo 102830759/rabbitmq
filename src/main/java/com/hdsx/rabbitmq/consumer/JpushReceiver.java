@@ -37,6 +37,7 @@ public class JpushReceiver {
         PushPayload payload = buildPushObject_android_tag_alertWithTitle(message);
         try {
             PushResult pushResult = jpushClient.sendPush(payload);
+            boolean resultOK = pushResult.isResultOK();// 返回结果
         } catch (APIConnectionException e) {
             e.printStackTrace();
         } catch (APIRequestException e) {

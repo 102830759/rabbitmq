@@ -6,7 +6,6 @@ import cn.jiguang.common.resp.APIRequestException;
 import cn.jsms.api.SendSMSResult;
 import cn.jsms.api.common.SMSClient;
 import cn.jsms.api.common.model.SMSPayload;
-import com.google.gson.JsonObject;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
@@ -23,12 +22,13 @@ public class MsgReceiver {
 
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    // TODO 需要相关配置 masterSecret & appkey
     private SMSClient client = new SMSClient("", "");
 
     @RabbitHandler
     public boolean process(String message) {
         SMSPayload payload = SMSPayload.newBuilder()
-                .setMobileNumber("13800138000")
+                .setMobileNumber("1760020095")
                 .setTempId(1)
                 .build();
         try {
