@@ -32,4 +32,6 @@ public class RabbitController {
             helloSender1.send("hellomsg:" + i);
         }
     }
+
+
 }

@@ -15,7 +15,16 @@ public class HelloReceiver1 {
 
     @RabbitHandler
     public void process(String hello) {
-        System.out.println("Receiver1  : " + hello);
+        try {
+            Thread thread = Thread.currentThread();
+            long id = thread.getId();
+            System.out.println("消费者 1 : " + hello + "  ,线程ID:" + id);
+            Thread.sleep(2000);
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class RabbitMQConfig {
 
+
+
     /**
      * 测试用到的队列 helloQueue
      *
@@ -44,7 +46,13 @@ public class RabbitMQConfig {
      */
     @Bean
     public Queue topicMsgQueue() {
-        return new Queue("topic.msg");
+//        return new Queue("topic.msg");
+        return new Queue("topic.msg", false, false, true);
+    }
+
+    @Bean
+    public Queue topicJpushQueue() {
+        return new Queue("topic.jpush");
     }
 
     /**
