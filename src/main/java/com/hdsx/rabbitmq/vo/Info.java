@@ -2,6 +2,7 @@ package com.hdsx.rabbitmq.vo;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class Info implements Serializable{
 
@@ -10,7 +11,7 @@ public class Info implements Serializable{
     // 消息内容
     private String msg;
     // 信息类型
-    private String types;
+    private List<String> types;
     // 收件人
     private String addressee;
     // 发件时间
@@ -24,11 +25,11 @@ public class Info implements Serializable{
         this.msg = msg;
     }
 
-    public String getTypes() {
+    public List<String> getTypes() {
         return types;
     }
 
-    public void setTypes(String types) {
+    public void setTypes(List<String> types) {
         this.types = types;
     }
 

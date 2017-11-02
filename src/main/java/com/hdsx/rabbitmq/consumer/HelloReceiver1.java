@@ -19,12 +19,10 @@ public class HelloReceiver1 {
             Thread thread = Thread.currentThread();
             long id = thread.getId();
             System.out.println("消费者 1 : " + hello + "  ,线程ID:" + id);
-            Thread.sleep(2000);
-
-        } catch (InterruptedException e) {
+//            Thread.sleep(2000);
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
 }

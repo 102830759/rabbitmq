@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="./jquery.js"></script>
+</head>
+
+<body>
+<input type="checkbox" name="msg" value="msg">短信
+<input type="checkbox" name="mail" value="mail">邮箱
+<input type="checkbox" name="queue" value="queue">队列
+<input type="checkbox" name="websocket" value="websocket">websocket
+<input type="submit" value="提交" onclick="formCommit()">
+
+</body>
+<script>
+
+  function formCommit() {
+    var sss = new Array();
+
+    if ($("input[name='msg']").is(':checked')) {
+      sss.push('msg')
+    }
+    if ($("input[name='mail']").is(':checked')) {
+      sss.push('mail')
+    }
+    if ($("input[name='queue']").is(':checked')) {
+      sss.push('queue')
+    }
+    if ($("input[name='websocket']").is(':checked')) {
+      sss.push('websocket')
+    }
+
+    $.ajax({
+      url: 'http://127.0.0.1:7072/test/sendMsg',
+      type: 'GET', //GET
+      async: true,    //或false,是否异步
+      data:
+        {'types': sss.join(','), 'msg': '测试消息'}
+      ,
+      timeout: 5000,    //超时时间
+      dataType: 'json',    //返回的数据格式：json/xml/html/script/jsonp/text
+      beforeSend: function (xhr) {
+        console.log(xhr)
+        console.log('发送前')
+      },
+      success: function (data, textStatus, jqXHR) {
+        console.log(data)
+        console.log(textStatus)
+        console.log(jqXHR)
+      },
+      error: function (xhr, textStatus) {
+        console.log('错误')
+        console.log(xhr)
+        console.log(textStatus)
+      },
+      complete: function () {
+        console.log('结束')
+      }
+
+    });
+
+
+//    var data = {types:sss,msg:'测试消息'};
+//    var xhr = new XMLHttpRequest();        //创建一个ajax对象
+//    xhr.onreadystatechange = function(event){    //对ajax对象进行监听
+//      if(xhr.readyState == 4){    //4表示解析完毕
+//        if(xhr.status == 200){    //200为正常返回
+//          console.log(xhr)
+//        }
+//      }
+//    };
+//    xhr.open('GET','http://127.0.0.1:7072/test/sendMsg',true);    //建立连接，参数一：发送方式，二：请求地址，三：是否异步，true为异步
+//    xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');    //可有可无
+//    xhr.send(data);        //发送
+  }
+
+
+</script>
+</html>

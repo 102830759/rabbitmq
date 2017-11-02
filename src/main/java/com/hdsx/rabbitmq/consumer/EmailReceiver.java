@@ -27,7 +27,6 @@ public class EmailReceiver {
 
     @RabbitHandler
     public void process(String message) {
-        System.out.println(String.format("receive topic a message: %s", message));
         try {
             final MimeMessage mimeMessage = mailSender.createMimeMessage();
             final MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
