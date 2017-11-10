@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Echarts demo</title>
+  <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
+  <!-- 引入 ECharts 文件 -->
+  <script type="text/javascript" src="./jquery.js"></script>
+  <script type="text/javascript" src="./sockjs.min.js"></script>
+  <script type="text/javascript" src="./stomp.min.js"></script>
+</head>
+<body>
+<h2 style="margin-left: 15px;">测试Websocket自动刷新页面状态</h2>
+<div class="row" style="margin-left: 0">
+  <div class="col-md-3" style="font-size: large">
+    <span>状态更新：</span>
+    <span id="load" style="color: #5bc0de">loading...</span>
+  </div>
+</div>
+<script type="text/javascript">
+  $(function () {
+    console.log('starting...');
+    // Stomp.js boilerplate
+    var ws;
+    if (typeof(WebSocket) === "function") {
+      console.log('ws协议...');
+      ws = new WebSocket('ws://192.168.184.129:15674/ws');
+    } else {
+      console.log('http协议...');
+      ws = new SockJS('http://192.168.184.129:15674/stomp');
+    }
+    // Init Client
+    var client = Stomp.over(ws);
+    // SockJS does not support heart-beat: disable heart-beats
+    // client will send heartbeats every xxxms
+    client.heartbeat.outgoing = 0;
+    // client does not want to receive heartbeats
+    client.heartbeat.incoming = 0;
+    // Declare on_connect
+    var on_connect = function (x) {
+      client.subscribe("websocket", function (d) {
+        // update result
+        $("#load").empty().text(d.body);
+        // disconnect client
+        // when close the brower, it will be closed automatically too
+        client.disconnect(function() {
+          console.log("See you next time!");
+        });
+      });
+
+    };
+    // Declare on_error
+    var on_error = function () {
+      console.log('error');
+    };
+    // Conect to RabbitMQ
+    client.connect('admin', 'admin', on_connect, on_error, '/');
+  });
+</script>
+</body>
+</html>

@@ -49,12 +49,27 @@ public class RabbitMQConfig {
 //        return new Queue("topic.msg");
         return new Queue("topic.msg", false, false, true);
     }
+//订阅者模式
+    @Bean
+    public Queue fanoutAQueue() {
+        return new Queue("fanout.a");
+    }
+
+    @Bean
+    public FanoutExchange fanoutExchange() {
+        return new FanoutExchange("fanoutExchange");
+    }
+
+    @Bean
+    public Binding bindingExchangeFanoutA(Queue fanoutAQueue, FanoutExchange fanoutExchange) {
+        return BindingBuilder.bind(fanoutAQueue).to(fanoutExchange);
+    }
 
     @Bean
     public Queue topicJpushQueue() {
         return new Queue("topic.jpush");
     }
-
+//订阅者模式 end
     /**
      * Topic是RabbitMQ中最灵活的一种方式，可以根据routing_Key自由的绑定不同的队列。
      *
@@ -72,13 +87,12 @@ public class RabbitMQConfig {
 
     @Bean
     public Binding bindingExchangeTopicWeb(Queue topicWebQueue, TopicExchange topicExchange) {
-        return BindingBuilder.bind(topicWebQueue).to(topicExchange).with("topic.web");
+        return BindingBuilder.bind(topicWebQueue).to(topicExchange).with("topic.web.#");
     }
 
     @Bean
     public Binding bindingExchangeTopicMsg(Queue topicMsgQueue, TopicExchange topicExchange) {
         return BindingBuilder.bind(topicMsgQueue).to(topicExchange).with("topic.msg");
     }
-
 
 }
