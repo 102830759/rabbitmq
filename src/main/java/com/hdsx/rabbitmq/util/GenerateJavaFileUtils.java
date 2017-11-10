@@ -64,23 +64,24 @@ public class GenerateJavaFileUtils {
         this.tName = tName;
         getTableStructure();
         StringBuffer sb = new StringBuffer();
-        sb.append("INSERT INTO "+tName+"(<include refid=\"column\"/>) VALUES(\r\n");
+        sb.append("INSERT INTO " + tName + "(<include refid=\"column\"/>) VALUES(\r\n");
         for (int i = 0; i < colnames.size(); i++) {
             sb.append("#{" + colnames.get(i).toLowerCase() + ",jdbcType=" + oracleSqlTypeToInsertType(colTypes.get(i), i) + "},\r\n");
         }
         int i = sb.lastIndexOf(",");
         String substring = sb.substring(0, i);
-        substring=substring+(")");
+        substring = substring + (")");
         System.out.println(substring);
     }
+
     // 更新SQL
     public void getUpdateSql(String tName) {
         this.tName = tName;
         getTableStructure();
         StringBuffer sb = new StringBuffer();
-        sb.append("UPDATE "+tName+" SET\r\n");
+        sb.append("UPDATE " + tName + " SET\r\n");
         for (int i = 0; i < colnames.size(); i++) {
-            sb.append(colnames.get(i)+"=#{" + colnames.get(i).toLowerCase() + ",jdbcType=" + oracleSqlTypeToInsertType(colTypes.get(i), i) + "},\r\n");
+            sb.append(colnames.get(i) + "=#{" + colnames.get(i).toLowerCase() + ",jdbcType=" + oracleSqlTypeToInsertType(colTypes.get(i), i) + "},\r\n");
         }
         int i = sb.lastIndexOf(",");
         String substring = sb.substring(0, i);
@@ -88,14 +89,21 @@ public class GenerateJavaFileUtils {
     }
 
     public void FilePushOut(String content) {
+        FileWriter fw = null;
         try { // 进行输出
-            FileWriter fw = new FileWriter(initcap(tName) + ".java");
+            fw = new FileWriter(initcap(tName) + ".java");
             PrintWriter pw = new PrintWriter(fw);
             pw.println(content);
             pw.flush();
             pw.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                fw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -149,7 +157,10 @@ public class GenerateJavaFileUtils {
         sb.append("public class " + initcap(tName)
                 + " implements Serializable {\r\n");
         for (int i = 0; i < colnames.size(); i++) {
-            sb.append("// " + labelnames.get(i) + "\r\n");
+            sb.append("/**\r\n");
+            sb.append("* " + labelnames.get(i) + "\r\n");
+            sb.append("*/\r\n");
+            sb.append("@ApiModelProperty(\"" + labelnames.get(i) + "\")\r\n");
             sb.append("private  " + oracleSqlType2JavaType(colTypes.get(i), i) + " " + colnames.get(i).toLowerCase() + ";\r\n");
         }
         sb.append("}\r\n");
@@ -177,17 +188,13 @@ public class GenerateJavaFileUtils {
      * @return
      */
     private String oracleSqlType2JavaType(String sqlType, int i) {
-        if (sqlType.equals("integer")) {
-            return "Integer";
-        } else if (sqlType.equals("long")) {
+        if (sqlType.equals("Long")) {
             return "Long";
-        } else if (sqlType.equals("float") || sqlType.equals("float precision"))
-            return "float";
-        else if (sqlType.equals("double") || sqlType.equals("double precision")) {
+        } else if (sqlType.equals("DOUBLE") || sqlType.equals("double precision")) {
             return "Double";
         } else if (sqlType.equals("NUMBER") || sqlType.equals("DECIMAL")
                 || sqlType.equals("NUMERIC") || sqlType.equals("real")) {
-            return "0".equals(scale.get(i)) ? "int" : "double";
+            return "0".equals(scale.get(i)) ? "Integer" : "Double";
         } else if (sqlType.equals("VARCHAR") || sqlType.equals("VARCHAR2")
                 || sqlType.equals("CHAR") || sqlType.equals("nvarchar")
                 || sqlType.equals("nchar")) {
@@ -195,13 +202,15 @@ public class GenerateJavaFileUtils {
         } else if (sqlType.equals("DATETIME") || sqlType.equals("DATE")
                 || sqlType.equals("TIMESTAMP(6)")) {
             return "Date";
-        }else {
+        } else {
             return "String";
         }
+
     }
 
     /**
      * 生成插入语句
+     *
      * @param sqlType
      * @param i
      * @return
@@ -209,12 +218,12 @@ public class GenerateJavaFileUtils {
     private String oracleSqlTypeToInsertType(String sqlType, int i) {
         if (sqlType.equals("DATETIME") || sqlType.equals("DATE")
                 || sqlType.equals("TIMESTAMP(6)")) {
-            return "DATE";
+            return "TIMESTAMP";
         } else if (sqlType.equals("VARCHAR2")) {
             return "VARCHAR";
         } else if (sqlType.equals("NUMBER") || sqlType.equals("DECIMAL")
-                || sqlType.equals("NUMERIC") || sqlType.equals("real")) {
-            return "0".equals(scale.get(i)) ? "INTEGER" : "DOUBLE";
+                || sqlType.equals("NUMERIC") || sqlType.equals("REAL")) {
+            return "0".equals(scale.get(i)) ? "INTEGER" : "DECIMAL";
         }
         return "VARCHAR";
     }
@@ -257,7 +266,7 @@ public class GenerateJavaFileUtils {
      * @param args
      */
     public static void main(String[] args) {
-        String tableName = "T_MSG_NOTICE";
+        String tableName = "T_TRAFFIC_CURRENT_EVENT";
         GenerateJavaFileUtils t = new GenerateJavaFileUtils();
 //        t.tableToEntity(tableName);
 //        t.getSqlColumn(tableName);

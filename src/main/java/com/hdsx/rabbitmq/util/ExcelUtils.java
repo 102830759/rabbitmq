@@ -16,14 +16,15 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ExcelUtils {
 
     private static String file = "D:\\test.xlsx";
-    private static String tableName = "T_MSG_NOTICE";
+    private static String tableCode = "T_SUBCENTER_CONTROL_SFZ";
+    private static String tableName = "分中心管辖收费站表";
 
-    private static List<String> fieldName = new ArrayList<>();
+    private static List<String> fieldCode = new ArrayList<>();
     private static List<String> fieldType = new ArrayList<>();
     private static List<String> fieldRemark = new ArrayList<>();
 
-    private static int fieldName_num = 1;
-    private static int fieldType_num = 3;
+    private static int fieldCode_num = 1;
+    private static int fieldType_num = 2;
     private static int fieldRemark_num = 0;
 
     public static void main(String[] args) {
@@ -47,7 +48,7 @@ public class ExcelUtils {
             for (int i = 1; i < rownum; i++) {
                 row = sheet.getRow(i);
                 if (row != null) {
-                    fieldName.add((String) getCellFormatValue(row.getCell(fieldName_num)));
+                    fieldCode.add((String) getCellFormatValue(row.getCell(fieldCode_num)));
                     fieldType.add((String) getCellFormatValue(row.getCell(fieldType_num)));
                     fieldRemark.add((String) getCellFormatValue(row.getCell(fieldRemark_num)));
                 } else {
@@ -57,15 +58,19 @@ public class ExcelUtils {
 
             StringBuffer create = new StringBuffer();
             StringBuffer reamrk = new StringBuffer();
-            create.append("create table " +tableName+"(\r\n");
-            for(int i = 0;i<fieldName.size();i++){
-                create.append(fieldName.get(i).toLowerCase()+"   "+ fieldType.get(i)+";\r\n");
-                reamrk.append("comment on table "+tableName+"."+fieldName.get(i).toLowerCase()+" is'"+fieldRemark.get(i)+"';\r\n");
+            create.append("create table " +tableCode+"(\r\n");
+            reamrk.append("comment on table "+tableCode +" is '"+tableName+"';\r\n");
+            for(int i = 0;i<fieldCode.size();i++){
+                if("".equals(fieldCode.get(i).trim()) || fieldCode.get(i)==null) return;
+                create.append(fieldCode.get(i).toLowerCase()+"   "+ fieldType.get(i)+",\r\n");
+                reamrk.append("comment on column "+tableCode+"."+fieldCode.get(i).toLowerCase()+" is'"+fieldRemark.get(i)+"';\r\n");
             }
-            create.append(")");
-            System.out.println(create.toString());
-            System.out.println(reamrk.toString());
 
+            int i = create.lastIndexOf(",");
+            String substring = create.substring(0, i);
+            substring = substring + (")");
+            System.out.println(substring);
+            System.out.println(reamrk.toString());
         }
 
     }
