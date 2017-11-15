@@ -29,4 +29,9 @@ public class TestController {
             rabbitTemplate.convertAndSend("topicExchange", "topic." + types.get(i), msg);
         }
     }
+    @RequestMapping(value = "create", method = RequestMethod.GET, produces = "application/json")
+    public void sendEmailsd(@RequestParam(value = "types") List<String> types,
+                           @RequestParam(value = "msg") String msg) {
+
+    }
 }

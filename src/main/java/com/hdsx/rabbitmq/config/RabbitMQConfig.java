@@ -7,8 +7,6 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class RabbitMQConfig {
 
-
-
     /**
      * 测试用到的队列 helloQueue
      *
