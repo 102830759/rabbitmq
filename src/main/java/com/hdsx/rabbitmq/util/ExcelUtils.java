@@ -16,16 +16,16 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ExcelUtils {
 
     private static String file = "D:\\test.xlsx";
-    private static String tableCode = "T_SUBCENTER_CONTROL_SFZ";
-    private static String tableName = "分中心管辖收费站表";
+    private static String tableCode = "SGT_SFL";
+    private static String tableName = "示范路";
 
     private static List<String> fieldCode = new ArrayList<>();
     private static List<String> fieldType = new ArrayList<>();
     private static List<String> fieldRemark = new ArrayList<>();
 
-    private static int fieldCode_num = 1;
+    private static int fieldCode_num = 0;
     private static int fieldType_num = 2;
-    private static int fieldRemark_num = 0;
+    private static int fieldRemark_num = 1;
 
     public static void main(String[] args) {
         Workbook wb = null;
@@ -63,7 +63,8 @@ public class ExcelUtils {
             for(int i = 0;i<fieldCode.size();i++){
                 if("".equals(fieldCode.get(i).trim()) || fieldCode.get(i)==null) return;
                 create.append(fieldCode.get(i).toLowerCase()+"   "+ fieldType.get(i)+",\r\n");
-                reamrk.append("comment on column "+tableCode+"."+fieldCode.get(i).toLowerCase()+" is'"+fieldRemark.get(i)+"';\r\n");
+                if (!"".equals(fieldRemark.get(i).trim()))
+                    reamrk.append("comment on column " + tableCode + "." + fieldCode.get(i).toLowerCase() + " is'" + fieldRemark.get(i).trim() + "';\r\n");
             }
 
             int i = create.lastIndexOf(",");
