@@ -38,14 +38,14 @@
     client.heartbeat.incoming = 0;
     // Declare on_connect
     var on_connect = function (x) {
-      client.subscribe("websocket", function (d) {
+      client.subscribe("zhangs", function (d) {
         // update result
         $("#load").empty().text(d.body);
         // disconnect client
         // when close the brower, it will be closed automatically too
-        client.disconnect(function() {
-          console.log("See you next time!");
-        });
+        // client.disconnect(function() {
+        //   console.log("See you next time!");
+        // });
       });
     };
     // Declare on_error

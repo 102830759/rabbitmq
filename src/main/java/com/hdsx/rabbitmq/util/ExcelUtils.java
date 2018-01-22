@@ -16,16 +16,16 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ExcelUtils {
 
     private static String file = "D:\\test.xlsx";
-    private static String tableCode = "SGT_SFL";
-    private static String tableName = "示范路";
+    private static String tableCode = "T_MSG_REPLY";
+    private static String tableName = "指令回复";
 
     private static List<String> fieldCode = new ArrayList<>();
     private static List<String> fieldType = new ArrayList<>();
     private static List<String> fieldRemark = new ArrayList<>();
 
-    private static int fieldCode_num = 0;
+    private static int fieldCode_num = 1;
     private static int fieldType_num = 2;
-    private static int fieldRemark_num = 1;
+    private static int fieldRemark_num = 0;
 
     public static void main(String[] args) {
         Workbook wb = null;
@@ -45,7 +45,7 @@ public class ExcelUtils {
             row = sheet.getRow(0);
             //获取最大列数
             int colnum = row.getPhysicalNumberOfCells();
-            for (int i = 1; i < rownum; i++) {
+            for (int i = 0; i < rownum; i++) {
                 row = sheet.getRow(i);
                 if (row != null) {
                     fieldCode.add((String) getCellFormatValue(row.getCell(fieldCode_num)));

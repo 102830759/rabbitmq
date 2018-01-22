@@ -47,7 +47,8 @@ public class RabbitMQConfig {
 //        return new Queue("topic.msg");
         return new Queue("topic.msg", false, false, true);
     }
-//订阅者模式
+
+    // 订阅者模式,广播模式
     @Bean
     public Queue fanoutAQueue() {
         return new Queue("fanout.a");
@@ -67,7 +68,8 @@ public class RabbitMQConfig {
     public Queue topicJpushQueue() {
         return new Queue("topic.jpush");
     }
-//订阅者模式 end
+    // 订阅者模式 end
+
     /**
      * Topic是RabbitMQ中最灵活的一种方式，可以根据routing_Key自由的绑定不同的队列。
      *
