@@ -26,8 +26,8 @@ public class GenerateJavaFileUtils {
 
     private static String driver = "oracle.jdbc.OracleDriver";
     private static String url = "jdbc:oracle:thin:@192.168.0.226:1521:orcl";
-    private static String user = "JHYH_NCGL";
-    private static String password = "JHYH_NCGL";
+    private static String user = "HENAN_RTDB";
+    private static String password = "HENAN_RTDB";
 
     /**
      * 生成类实体
@@ -266,12 +266,13 @@ public class GenerateJavaFileUtils {
      * @param args
      */
     public static void main(String[] args) {
-        String tableName = "XMK_AQSMFH";
-        GenerateJavaFileUtils t = new GenerateJavaFileUtils();
+//        String tableName = "T_SUBCENTER";
+//        GenerateJavaFileUtils t = new GenerateJavaFileUtils();
 //        t.tableToEntity(tableName);
-        t.getSqlColumn(tableName);
+//        t.getSqlColumn(tableName);
 //        t.getInsertSql(tableName);
 //        t.getUpdateSql(tableName);
+
     }
 
 }

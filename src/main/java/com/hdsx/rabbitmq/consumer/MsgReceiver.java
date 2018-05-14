@@ -33,7 +33,7 @@ public class MsgReceiver {
     @RabbitHandler
     public void process(String message) {
         SMSPayload payload = SMSPayload.newBuilder()
-                .setMobileNumber("17600200955")
+                .setMobileNumber("13233853721")
                 .setVoiceLang(2)
                 .setCode("039482")
                 .build();

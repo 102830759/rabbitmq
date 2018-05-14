@@ -16,16 +16,16 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ExcelUtils {
 
     private static String file = "D:\\test.xlsx";
-    private static String tableCode = "T_MSG_REPLY";
-    private static String tableName = "指令回复";
+    private static String tableCode = "T_EMER_GOODS";
+    private static String tableName = "应急物资";
 
     private static List<String> fieldCode = new ArrayList<>();
     private static List<String> fieldType = new ArrayList<>();
     private static List<String> fieldRemark = new ArrayList<>();
 
-    private static int fieldCode_num = 1;
-    private static int fieldType_num = 2;
-    private static int fieldRemark_num = 0;
+    private static int fieldCode_num = 1; // 字段名
+    private static int fieldType_num = 2; // 类型
+    private static int fieldRemark_num = 0; // 备注
 
     public static void main(String[] args) {
         Workbook wb = null;
