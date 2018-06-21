@@ -1,6 +1,10 @@
 package com.hdsx.rabbitmq.controller;
 
 
+import com.google.gson.Gson;
+import com.hdsx.rabbitmq.service.JsmsService;
+import com.hdsx.rabbitmq.util.GsonUtil;
+import com.hdsx.rabbitmq.vo.Info;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -24,16 +28,31 @@ public class TestController {
     @Autowired
     private ConnectionFactory connectionFactory;
 
+    @Autowired
+    private JsmsService jsmsService;
+
     @RequestMapping(value = "sendMsg", method = RequestMethod.GET, produces = "application/json")
-    public void sendEmail1(@RequestParam(value = "types") List<String> types,
-                           @RequestParam(value = "msg") String msg) {
-        if (types.isEmpty()) return;
+    public Boolean sendEmail1(@RequestParam(value = "types") List<String> types,
+                           @RequestParam(value = "msg") String msg,
+                           @RequestParam(value = "sendee") String sendee) {
+        if (types.isEmpty()) return false;
         for (int i = 0; i < types.size(); i++) {
             if ("websocket".equals(types.get(i))) {
                 rabbitTemplate.convertAndSend("websocket", msg);
             }
-            rabbitTemplate.convertAndSend("topicExchange", "topic." + types.get(i), msg);
+            else if("msg".equals(types.get(i))){// 短信
+                String s = jsmsService.sendSMSCode(sendee);
+                System.out.println("信息：" + s);
+            }else if("mail".equals(types.get(i))){// 邮件
+                Info info = new Info();
+                info.setAddressee(sendee);
+                info.setMsg(msg);
+                rabbitTemplate.convertAndSend("topicExchange", "topic." + types.get(i), GsonUtil.objectToJson(info));
+            }else if("queue".equals(types.get(i))){// 对列
+                rabbitTemplate.convertAndSend("topicExchange", "topic." + types.get(i), msg);
+            }
         }
+        return true;
     }
 
     @RequestMapping(value = "create", method = RequestMethod.GET, produces = "application/json")

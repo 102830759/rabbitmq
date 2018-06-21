@@ -1,6 +1,8 @@
 package com.hdsx.rabbitmq.consumer;
 
 
+import com.hdsx.rabbitmq.util.GsonUtil;
+import com.hdsx.rabbitmq.vo.Info;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +32,12 @@ public class EmailReceiver {
         try {
             final MimeMessage mimeMessage = mailSender.createMimeMessage();
             final MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
+            Info info = (Info)GsonUtil.jsonToObject(message, Info.class);
             mimeMessageHelper.setFrom(sender);
-            mimeMessageHelper.setTo("18701324@qq.com");
+            mimeMessageHelper.setTo(info.getAddressee());
             mimeMessageHelper.setSubject("测试邮件主题");
-            mimeMessageHelper.setText(message);
+            mimeMessageHelper.setText(info.getMsg());
             this.mailSender.send(mimeMessage);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
