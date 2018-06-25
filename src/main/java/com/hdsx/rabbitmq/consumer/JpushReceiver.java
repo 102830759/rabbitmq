@@ -23,7 +23,7 @@ import static cn.jpush.api.push.model.notification.PlatformNotification.ALERT;
  */
 
 @Component
-@RabbitListener(queues = "topic.jpush")
+@RabbitListener(queues = "jpush")
 public class JpushReceiver {
     protected static final String APP_KEY = "d4ee2375846bc30fa51334f5";
     protected static final String MASTER_SECRET = "1bdab6d2cb99727cf768cc9c";

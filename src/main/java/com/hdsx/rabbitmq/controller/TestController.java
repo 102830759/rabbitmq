@@ -1,14 +1,14 @@
 package com.hdsx.rabbitmq.controller;
 
 
-import com.google.gson.Gson;
 import com.hdsx.rabbitmq.service.JsmsService;
 import com.hdsx.rabbitmq.util.GsonUtil;
 import com.hdsx.rabbitmq.vo.Info;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +19,7 @@ import java.util.List;
  */
 
 @RestController
+@Api(description = "测试")
 @RequestMapping("test")
 public class TestController {
 
@@ -32,49 +33,101 @@ public class TestController {
     private JsmsService jsmsService;
 
     @RequestMapping(value = "sendMsg", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation(value = "集成测试")
     public Boolean sendEmail1(@RequestParam(value = "types") List<String> types,
-                           @RequestParam(value = "msg") String msg,
-                           @RequestParam(value = "sendee") String sendee) {
+                              @RequestParam(value = "msg") String msg,
+                              @RequestParam(value = "sendee") String sendee) {
         if (types.isEmpty()) return false;
         for (int i = 0; i < types.size(); i++) {
-            if ("websocket".equals(types.get(i))) {
-                rabbitTemplate.convertAndSend("websocket", msg);
-            }
-            else if("msg".equals(types.get(i))){// 短信
-                String s = jsmsService.sendSMSCode(sendee);
-                System.out.println("信息：" + s);
-            }else if("mail".equals(types.get(i))){// 邮件
+            if ("websocket".equals(types.get(i)) || "queue".equals(types.get(i))) { // websocket和queue都是发送到对应的队列上的
+                rabbitTemplate.convertAndSend(sendee, msg);
+            } else {
                 Info info = new Info();
                 info.setAddressee(sendee);
                 info.setMsg(msg);
-                rabbitTemplate.convertAndSend("topicExchange", "topic." + types.get(i), GsonUtil.objectToJson(info));
-            }else if("queue".equals(types.get(i))){// 对列
-                rabbitTemplate.convertAndSend("topicExchange", "topic." + types.get(i), msg);
+                rabbitTemplate.convertAndSend(types.get(i),GsonUtil.objectToJson(info));
             }
         }
         return true;
     }
 
-    @RequestMapping(value = "create", method = RequestMethod.GET, produces = "application/json")
-    public void sendEmailsd(@RequestParam(value = "types") List<String> types,
-                            @RequestParam(value = "msg") String msg) {
-
-    }
-
     /**
      * 创建队列，绑定转换，路由规则    topoc.exchangeName.*
-     * @param queueName
-     * @param exchangeName
+     * 适用于一对多信息发布
+     *
+     * @param queueName    队列名（习惯是用户名）
+     * @param exchangeName 单位id
      */
     @RequestMapping(value = "createQueue", method = RequestMethod.GET, produces = "application/json")
-    public void createQueue(@RequestParam(value = "queueName") String  queueName,
-                       @RequestParam(value = "exchangeName") String exchangeName){
+    @ApiOperation(value = "创建一个队列，并设置其转换名exchange，以及转换规则routingkey")
+    public void createQueue(@RequestParam(value = "queueName") String queueName,
+                            @RequestParam(value = "exchangeName") String exchangeName) {
 
         RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
         String queueName1 = rabbitAdmin.declareQueue(new Queue(queueName));
         rabbitAdmin.declareExchange(new TopicExchange(exchangeName));
 //        rabbitAdmin.declareBinding(BindingBuilder.bind(new Queue(queueName)).to(new TopicExchange(exchangeName)).with("topic."+exchangeName+".*"));
-        rabbitAdmin.declareBinding(new Binding(queueName1,Binding.DestinationType.QUEUE,exchangeName,"topic."+exchangeName+".*",null));
+        rabbitAdmin.declareBinding(new Binding(queueName1, Binding.DestinationType.QUEUE, exchangeName, "topic." + exchangeName + ".*", null));
+        rabbitAdmin.declareBinding(new Binding(queueName1, Binding.DestinationType.QUEUE, "topicExchange", "topic.*.*", null));
     }
 
+    /**
+     * 给指定一个队列发送信息
+     *
+     * @param queueName
+     */
+    @RequestMapping(value = "msg_to_queue", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation(value = "给指定一个队列发送信息")
+    public Boolean sendMSG_TO_QUEUE(@RequestParam(value = "queueName") String queueName,
+                                    @RequestParam(value = "content") String content) {
+        Boolean flag = false;
+        try {
+            rabbitTemplate.convertAndSend(queueName, content);
+            flag = true;
+        } catch (Exception e) {
+            // TODO do SomeThing
+        }
+        return flag;
+    }
+
+    /**
+     * 给某一单位发送信息
+     * 单位下是多个用户
+     *
+     * @param dept
+     * @param content
+     * @return
+     */
+    @RequestMapping(value = "msg_to_dept", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation(value = "给某一单位发送信息")
+    public Boolean setMSG_TO_DEPT(@RequestParam(value = "dept") String dept,
+                                  @RequestParam(value = "content") String content) {
+        Boolean flag = false;
+        try {
+            rabbitTemplate.convertAndSend(dept, "topic." + dept + ".*", content);
+            flag = true;
+        } catch (Exception e) {
+            // TODO do SomeThing
+        }
+        return flag;
+    }
+
+    /**
+     * 给所有用户发送信息
+     *
+     * @param content
+     * @return
+     */
+    @RequestMapping(value = "msg_to_users", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation(value = "给某一单位发送信息")
+    public Boolean setMSG_TO_Users(@RequestParam(value = "content") String content) {
+        Boolean flag = false;
+        try {
+            rabbitTemplate.convertAndSend("topicExchange", "topic.*.*", content);
+            flag = true;
+        } catch (Exception e) {
+            // TODO do SomeThing
+        }
+        return flag;
+    }
 }

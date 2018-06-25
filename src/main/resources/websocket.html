@@ -38,7 +38,7 @@
     client.heartbeat.incoming = 0;
     // Declare on_connect
     var on_connect = function (x) {
-      client.subscribe("zhangs", function (d) {
+      client.subscribe("lisi", function (d) {
         // update result
         $("#load").empty().text(d.body);
         // disconnect client

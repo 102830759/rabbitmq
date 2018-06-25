@@ -18,7 +18,7 @@ import javax.mail.internet.MimeMessage;
  */
 
 @Component
-@RabbitListener(queues = "topic.mail")
+@RabbitListener(queues = "mail")
 public class EmailReceiver {
 
     @Autowired
@@ -32,7 +32,7 @@ public class EmailReceiver {
         try {
             final MimeMessage mimeMessage = mailSender.createMimeMessage();
             final MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
-            Info info = (Info)GsonUtil.jsonToObject(message, Info.class);
+            Info info = (Info) GsonUtil.jsonToObject(message, Info.class);
             mimeMessageHelper.setFrom(sender);
             mimeMessageHelper.setTo(info.getAddressee());
             mimeMessageHelper.setSubject("测试邮件主题");

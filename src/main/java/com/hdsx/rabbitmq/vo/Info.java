@@ -49,5 +49,4 @@ public class Info implements Serializable{
         this.date = date;
     }
 
-
 }

@@ -1,7 +1,10 @@
 package com.hdsx.rabbitmq.controller;
 
 import com.hdsx.rabbitmq.service.JsmsService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,11 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("login")
+@Api(value = "登陆")
 public class LoginControl {
 
     @Autowired
     private JsmsService jsmsService;
-
 
     public void login(String username, String password) {
 
@@ -30,6 +33,7 @@ public class LoginControl {
      * @return
      */
     @RequestMapping(value = "getVal" ,method = RequestMethod.GET)
+    @ApiOperation(value = "获得验证码")
     public String getVal(@RequestParam("phone") String phone) {
         String s = jsmsService.sendSMSCode(phone);
         System.out.println("信息：" + s);
@@ -43,6 +47,7 @@ public class LoginControl {
      * @return
      */
     @RequestMapping("validSMSCode")
+    @ApiOperation(value = "检验短信验证码")
     public Boolean validSMSCode(@RequestParam String msgId,@RequestParam String code) {
         Boolean aBoolean = jsmsService.sendValidSMSCode(msgId, code);
         return aBoolean;
@@ -55,10 +60,10 @@ public class LoginControl {
      * @return
      */
     @RequestMapping(value = "setMSG",method = RequestMethod.GET)
+    @ApiOperation(value = "发送短信")
     public Boolean setMSG(@RequestParam("phone") String phone,
                           @RequestParam("content") String content) {
-        Integer template = jsmsService.createTemplate();
-        boolean f= jsmsService.sendScheduleSMS(content,phone,template);
+        boolean f= jsmsService.sendScheduleSMS(content,phone);
         return f;
     }
 }

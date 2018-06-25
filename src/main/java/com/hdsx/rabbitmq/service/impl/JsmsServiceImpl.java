@@ -13,6 +13,7 @@ import cn.jsms.api.schedule.model.ScheduleSMSPayload;
 import cn.jsms.api.template.SendTempSMSResult;
 import cn.jsms.api.template.TemplatePayload;
 import com.hdsx.rabbitmq.service.JsmsService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -35,6 +36,9 @@ public class JsmsServiceImpl implements JsmsService {
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     // TODO 需要相关配置 masterSecret & appkey
     private SMSClient client = new SMSClient(MASTER_SECRET, APP_KEY);
+
+    @Value("${temp_id}")
+    private Integer temp_id;
 
     public String sendSMSCode(String phone) {
         SMSPayload payload
@@ -70,12 +74,12 @@ public class JsmsServiceImpl implements JsmsService {
     }
 
     @Override
-    public Boolean sendScheduleSMS(String content, String phone, Integer temp_id) {
+    public Boolean sendScheduleSMS(String content, String phone) {
         ScheduleSMSPayload payload = ScheduleSMSPayload.newBuilder()
                 .setMobileNumber(phone)
                 .setTempId(temp_id)
-                .setSendTime(format.format(new Date().getTime() + (1000 * 60 * 3)))
-                .addTempPara("code", content)
+                .setSendTime(format.format(new Date().getTime() + (1000 * 60 * 1)))
+                .addTempPara("content", content)
                 .build();
         Boolean resultOK = false;
         try {

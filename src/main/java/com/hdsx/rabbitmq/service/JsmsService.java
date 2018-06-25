@@ -10,21 +10,29 @@ import cn.jiguang.common.resp.APIRequestException;
 public interface JsmsService {
     /**
      * 发送验证码
+     *
      * @param phone
      * @return
      */
     public String sendSMSCode(String phone);
+
     /**
      * Send SMS verification code to server, to verify if the code valid 校验验证码
+     *
      * @param msgId The message id of the verification code
-     * @param code Verification code
+     * @param code  Verification code
      * @return return ValidSMSResult includes is_valid
      * @throws APIConnectionException connection exception
-     * @throws APIRequestException request exception
+     * @throws APIRequestException    request exception
      */
-    public Boolean sendValidSMSCode(String msgId,String code);
+    public Boolean sendValidSMSCode(String msgId, String code);
 
-    public Boolean sendScheduleSMS(String content,String phone,Integer temp_id);
+    public Boolean sendScheduleSMS(String content, String phone);
 
-    public Integer createTemplate() ;
+    /**
+     * 创建模板  此方法最好不要用 ，有缺陷
+     *
+     * @return
+     */
+    public Integer createTemplate();
 }
