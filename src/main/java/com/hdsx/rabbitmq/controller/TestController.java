@@ -1,14 +1,12 @@
 package com.hdsx.rabbitmq.controller;
 
 
-import com.hdsx.rabbitmq.service.JsmsService;
+import com.hdsx.rabbitmq.service.QueueService;
 import com.hdsx.rabbitmq.util.GsonUtil;
 import com.hdsx.rabbitmq.vo.Info;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.amqp.core.*;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,10 +25,7 @@ public class TestController {
     private AmqpTemplate rabbitTemplate;
 
     @Autowired
-    private ConnectionFactory connectionFactory;
-
-    @Autowired
-    private JsmsService jsmsService;
+    private QueueService queueService;
 
     @RequestMapping(value = "sendMsg", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "集成测试")
@@ -62,13 +57,10 @@ public class TestController {
     @ApiOperation(value = "创建一个队列，并设置其转换名exchange，以及转换规则routingkey")
     public void createQueue(@RequestParam(value = "queueName") String queueName,
                             @RequestParam(value = "exchangeName") String exchangeName) {
-
-        RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
-        String queueName1 = rabbitAdmin.declareQueue(new Queue(queueName));
-        rabbitAdmin.declareExchange(new TopicExchange(exchangeName));
-//        rabbitAdmin.declareBinding(BindingBuilder.bind(new Queue(queueName)).to(new TopicExchange(exchangeName)).with("topic."+exchangeName+".*"));
-        rabbitAdmin.declareBinding(new Binding(queueName1, Binding.DestinationType.QUEUE, exchangeName, "topic." + exchangeName + ".*", null));
-        rabbitAdmin.declareBinding(new Binding(queueName1, Binding.DestinationType.QUEUE, "topicExchange", "topic.*.*", null));
+        String queue1 = queueService.declareQueue(queueName);
+        queueService.declareExchange(exchangeName);
+        queueService.declareBinding(queue1,exchangeName,"topic." + exchangeName + ".*");
+        boolean topicExchange = queueService.declareBinding(queue1, "topicExchange", "topic.*.*");
     }
 
     /**
