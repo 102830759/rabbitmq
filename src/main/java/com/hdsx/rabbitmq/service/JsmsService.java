@@ -2,6 +2,9 @@ package com.hdsx.rabbitmq.service;
 
 import cn.jiguang.common.resp.APIConnectionException;
 import cn.jiguang.common.resp.APIRequestException;
+import com.hdsx.rabbitmq.vo.Info;
+
+import java.util.List;
 
 /**
  * @author huyue@hdsxtech.com
@@ -27,11 +30,24 @@ public interface JsmsService {
      */
     public Boolean sendValidSMSCode(String msgId, String code);
 
+    /**
+     * 发送单条定时短信
+     * @param content
+     * @param phone
+     * @return
+     */
     public Boolean sendScheduleSMS(String content, String phone);
 
     /**
+     * 批量发送短信
+     * @param infoList
+     * @return
+     */
+    public Boolean SendBatchScheduleSMS(List<Info> infoList);
+
+    /**
      * 创建模板  此方法最好不要用 ，有缺陷
-     *
+     * 模板创建后 极光后台需要审核的  ，创建的模板不能直接使用
      * @return
      */
     public Integer createTemplate();

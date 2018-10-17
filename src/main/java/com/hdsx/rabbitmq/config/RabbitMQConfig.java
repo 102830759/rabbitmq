@@ -1,6 +1,7 @@
 package com.hdsx.rabbitmq.config;
 
-import org.springframework.amqp.core.*;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 

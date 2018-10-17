@@ -3,8 +3,6 @@ package com.hdsx.rabbitmq.controller;
 import com.hdsx.rabbitmq.service.JsmsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(value = "登陆")
 public class LoginControl {
 
-    @Autowired
+//    @Autowired
     private JsmsService jsmsService;
 
     public void login(String username, String password) {

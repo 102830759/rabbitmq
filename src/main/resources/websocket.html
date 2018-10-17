@@ -24,7 +24,7 @@
     var ws;
     if (typeof(WebSocket) === "function") {
       console.log('ws协议...');
-      ws = new WebSocket('ws://192.168.184.129:15674/ws');
+      ws = new WebSocket('ws://61.163.107.12:9004/websocket?42&76EB8C0A0F0E7C66E05385018D0A106C');
     } else {
       console.log('http协议...');
       ws = new SockJS('http://192.168.184.129:15674/stomp');

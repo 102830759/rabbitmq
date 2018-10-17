@@ -13,11 +13,13 @@ import cn.jsms.api.schedule.model.ScheduleSMSPayload;
 import cn.jsms.api.template.SendTempSMSResult;
 import cn.jsms.api.template.TemplatePayload;
 import com.hdsx.rabbitmq.service.JsmsService;
+import com.hdsx.rabbitmq.vo.Info;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -25,20 +27,22 @@ import java.util.*;
  * @date 2018/4/20 15:44
  */
 
-@Service
+//@Service
 public class JsmsServiceImpl implements JsmsService {
 
-    protected static final String APP_KEY = "f19c5462045ae94eefb44563";
-    protected static final String MASTER_SECRET = "6de11ca30113c0cda42074c2";
-    //未知
-    protected static final String DEV_KEY = "8885227f9e44358a59aa0880";
-    protected static final String DEV_SECRET = "281399a95fa3be40645f0558";
-    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    // TODO 需要相关配置 masterSecret & appkey
-    private SMSClient client = new SMSClient(MASTER_SECRET, APP_KEY);
+    @Value("${APP_KEY}")
+    private String APP_KEY;
+
+    @Value("${MASTER_SECRET}")
+    private String MASTER_SECRET;
 
     @Value("${temp_id}")
     private Integer temp_id;
+
+    // TODO 需要相关配置 masterSecret & appkey
+    private SMSClient client = new SMSClient(MASTER_SECRET, APP_KEY);
+
+    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public String sendSMSCode(String phone) {
         SMSPayload payload
@@ -79,7 +83,7 @@ public class JsmsServiceImpl implements JsmsService {
                 .setMobileNumber(phone)
                 .setTempId(temp_id)
                 .setSendTime(format.format(new Date().getTime() + (1000 * 60 * 1)))
-                .addTempPara("content", content)
+                .addTempPara("number", content)
                 .build();
         Boolean resultOK = false;
         try {
@@ -91,30 +95,34 @@ public class JsmsServiceImpl implements JsmsService {
         return resultOK;
     }
 
-    public void testSendBatchScheduleSMS() {
+    @Override
+    public Boolean SendBatchScheduleSMS(List<Info> infoList) {
+        boolean resultOK = false;
         List<RecipientPayload> list = new ArrayList<RecipientPayload>();
-        RecipientPayload recipientPayload1 = new RecipientPayload.Builder()
-                .setMobile("13800138000")
-                .addTempPara("code", "638938")
-                .build();
-        RecipientPayload recipientPayload2 = new RecipientPayload.Builder()
-                .setMobile("13800138000")
-                .addTempPara("code", "829302")
-                .build();
-        list.add(recipientPayload1);
-        list.add(recipientPayload2);
+        for (Info info : infoList) {
+            RecipientPayload recipientPayload = new RecipientPayload.Builder()
+                    .setMobile(info.getAddressee())
+                    .addTempPara("number", info.getMsg())
+                    .build();
+            list.add(recipientPayload);
+        }
         RecipientPayload[] recipientPayloads = new RecipientPayload[list.size()];
         ScheduleSMSPayload smsPayload = ScheduleSMSPayload.newBuilder()
-                .setSendTime("2017-08-02 14:20:00")
-                .setTempId(1)
+                .setSendTime(format.format(new Date().getTime() + (1000 * 60 * 1)))
+                .setTempId(temp_id)
                 .setRecipients(list.toArray(recipientPayloads))
                 .build();
         try {
             BatchSMSResult result = client.sendBatchScheduleSMS(smsPayload);
+            resultOK = result.isResultOK();
         } catch (APIConnectionException e) {
+            e.printStackTrace();
         } catch (APIRequestException e) {
+            e.printStackTrace();
         }
+        return resultOK;
     }
+
 
     public Integer createTemplate() {
         Integer temp_id = 1;

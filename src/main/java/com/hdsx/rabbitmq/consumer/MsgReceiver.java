@@ -6,7 +6,6 @@ import com.hdsx.rabbitmq.util.GsonUtil;
 import com.hdsx.rabbitmq.vo.Info;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Component;
 @RabbitListener(queues = "msg")
 public class MsgReceiver {
 
-    @Autowired
+//    @Autowired
     private JsmsService jsmsService;
 
     @RabbitHandler
